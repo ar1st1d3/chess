@@ -31,5 +31,5 @@ Voux pouvez télécharger le projet via le zip proposé par github
 Sinon vous pouvez utiliser la commande git suivante pour télécharger directement le projet avec votre terminal : 
 
 ```
-
+git clone https://github.com/ar1st1d3/chess.git
 ```
