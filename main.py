@@ -58,10 +58,6 @@ class Piece:
             # Associez un événement de clic à chaque cercle gris
             self.canvas.tag_bind(circle_id, '<Button-1>', lambda event, row=move[1], col=move[0]: self.move_to(row, col))
 
-    def on_circle_click(self, row, col):
-        # Fonction à exécuter lorsque l'un des cercles gris est cliqué
-        print(f"Cercle gris cliqué : ligne {row}, colonne {col}")
-
     def move_to(self, row, col):
         # Copiez les coordonnées actuelles de la pièce
         if verif_piece(col, row) : 
@@ -83,7 +79,6 @@ class Piece:
             opponent_king = find_opponent_king('white')
 
         if is_check(opponent_king):
-            print("Ce coup met le roi adverse en échec!")
             if is_checkmate(opponent_king): 
                 show_game_over(self.color)
 
