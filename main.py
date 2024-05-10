@@ -454,34 +454,6 @@ def is_checkmate(king):
                     piece.move_to(y, x)
     return True
 
-def show_game_over(gagnant):
-    def finito() : 
-        root.after(100, root.destroy)
-    if gagnant == "white" : 
-        gagnant ="blanc"
-    else : 
-        gagnant = "noirs"
-    # Créez une nouvelle fenêtre pour afficher le message Game Over
-    game_over_window = tk.Toplevel(root)
-    game_over_window.title("Game Over")
-
-    def restart_game():
-        # Supprimez toutes les pièces actuelles de l'échiquier
-        game_over_window.destroy()
-        Piece.tour = "white"
-        for piece in all_piece:
-            piece.suppr()
-
-        # Réinitialisez les pièces sur l'échiquier
-        initialize_pieces(frame)
-
-    # Créez un canevas pour afficher le message Game Over
-    canvas = tk.Canvas(game_over_window, width=300, height=200)
-    canvas.pack()
-    canvas.create_text(150, 100, text=f"Les {gagnant} ont gangné", font=("Helvetica", 20), fill="black")
-    # Créez des boutons pour relancer et fermer la fenêtre
-    restart_button = tk.Button(game_over_window, text="Relancer", command=restart_game)
-    restart_button.pack(side="left", padx=10, pady=10)
 
     close_button = tk.Button(game_over_window, text="Fermer", command=finito)
     close_button.pack(side="right", padx=10, pady=10)
