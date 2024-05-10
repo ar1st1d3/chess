@@ -40,9 +40,17 @@ class Piece:
                 self.highlight_possible_moves()
 
     def highlight_possible_moves(self):
-        # Dessiner des cercles gris transparents sur les cases possibles pour le déplacement de la pièce
+        # Récupere les coups légaux 
         possible_moves = self.get_possible_moves()
-        for move in possible_moves:
+
+        # Retire les coups qui s'auto-mets en echec 
+        coups_valides = []
+        for move in possible_moves : 
+            if not self.move_to_test(move[1], move[0]) :
+                coups_valides.append(move)
+
+        # Dessiner des cercles gris transparents sur les cases possibles pour le déplacement de la pièce
+        for move in coups_valides:
             x = move[0] * 50 + 25
             y = move[1] * 50 + 25
             circle_id = self.canvas.create_oval(x - 20, y - 20, x + 20, y + 20, fill="gray60", outline="gray60")
@@ -84,6 +92,25 @@ class Piece:
         else: 
             Piece.tour = "white"
 
+    def move_to_test(self, row, col) : 
+        # Save la position initial : 
+        row_init = self.row
+        col_init = self.col
+
+        # Effectue le mouvement
+        self.row = row
+        self.col = col
+        
+        # Verifie si il y a echec
+        if is_check(find_opponent_king(self.color)) : 
+            echec_after_move = True
+        else : 
+            echec_after_move = False
+        
+        self.row = row_init
+        self.col = col_init
+
+        return echec_after_move
 
     def remove_highlighted_circles(self):
         # Supprimer tous les cercles gris
@@ -369,11 +396,11 @@ class Piece:
             if verif_piece(self.col -1, self.row+1) and verif_color(self.col+1, self.row+1) != self.color or not verif_piece(self.col+1,self.row+1) : 
                 liste.append((self.col+1, self.row+1))
 
-        return liste
-                
+        return liste           
+    
     def at_position(self, x, y) :
         return self.col == x and self.row == y
-
+    
     def suppr(self)  :
         #supprime la piece
         self.canvas.delete(self.image_id)
@@ -454,6 +481,34 @@ def is_checkmate(king):
                     piece.move_to(y, x)
     return True
 
+def show_game_over(gagnant):
+    def finito() : 
+        root.after(100, root.destroy)
+    if gagnant == "white" : 
+        gagnant ="blanc"
+    else : 
+        gagnant = "noirs"
+    # Créez une nouvelle fenêtre pour afficher le message Game Over
+    game_over_window = tk.Toplevel(root)
+    game_over_window.title("Game Over")
+
+    def restart_game():
+        # Supprimez toutes les pièces actuelles de l'échiquier
+        game_over_window.destroy()
+        Piece.tour = "white"
+        for piece in all_piece:
+            piece.suppr()
+
+        # Réinitialisez les pièces sur l'échiquier
+        initialize_pieces(frame)
+
+    # Créez un canevas pour afficher le message Game Over
+    canvas = tk.Canvas(game_over_window, width=300, height=200)
+    canvas.pack()
+    canvas.create_text(150, 100, text=f"Les {gagnant} ont gangné", font=("Helvetica", 20), fill="black")
+    # Créez des boutons pour relancer et fermer la fenêtre
+    restart_button = tk.Button(game_over_window, text="Relancer", command=restart_game)
+    restart_button.pack(side="left", padx=10, pady=10)
 
     close_button = tk.Button(game_over_window, text="Fermer", command=finito)
     close_button.pack(side="right", padx=10, pady=10)
@@ -476,4 +531,3 @@ for i in range(8):
 initialize_pieces(frame)
 
 root.mainloop()
-
