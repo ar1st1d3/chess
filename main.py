@@ -36,6 +36,7 @@ class Piece:
                 self.remove_highlighted_circles()
                 self.selected = False
             else:
+                retire_button()
                 self.selected = True
                 self.highlight_possible_moves()
 
@@ -134,7 +135,7 @@ class Piece:
         elif self.color == "black" and self.role == "pawn" : 
             if not verif_piece(self.col, self.row+1):
                 liste.append((self.col, self.row+1))
-            if self.row == 6 and not verif_piece(self.col, self.row+2) :
+            if self.row == 1 and not verif_piece(self.col, self.row+2) :
                 liste.append((self.col, self.row+2))
             if verif_piece(self.col-1, self.row+1) and verif_color(self.col-1, self.row+1) == "white" :
                 liste.append((self.col-1, self.row+1))
@@ -404,6 +405,10 @@ class Piece:
 # Initialisez les pièces et créez l'échiquier comme précédemment
 all_piece = []
 
+def retire_button() : 
+    for piece in all_piece : 
+        piece.remove_highlighted_circles()
+
 def initialize_pieces(canvas):
     initial_positions = {
         'black rook': [(0, 0), (0, 7)],
@@ -524,5 +529,38 @@ for i in range(8):
 
 # Initialiser toutes les pièces sur l'échiquier
 initialize_pieces(frame)
+
+# Temps
+
+temps_blanc = 600
+temps_noir = 600
+
+# Créer les étiquettes pour afficher le temps
+label_temps_blanc = tk.Label(root, text="Temps Blanc: 10:00")
+label_temps_blanc.pack()
+
+label_temps_noir = tk.Label(root, text="Temps Noir: 10:00")
+label_temps_noir.pack()
+
+# Fonction pour mettre à jour le temps restant
+def mettre_a_jour_temps():
+    global temps_blanc, temps_noir  # Déclarer les variables comme globales
+
+    # Vérifier la couleur du joueur actuel
+    if Piece.tour == "white":
+        temps_restant_blanc = temps_blanc // 60, temps_blanc % 60
+        label_temps_blanc.config(text=f"Temps Blanc: {temps_restant_blanc[0]:02d}:{temps_restant_blanc[1]:02d}")
+        temps_blanc -= 1  # Décrémenter le temps restant pour le joueur blanc
+    else:
+        temps_restant_noir = temps_noir // 60, temps_noir % 60
+        label_temps_noir.config(text=f"Temps Noir: {temps_restant_noir[0]:02d}:{temps_restant_noir[1]:02d}")
+        temps_noir -= 1  # Décrémenter le temps restant pour le joueur noir
+
+    # Mettre à jour les temps toutes les secondes
+    root.after(1000, mettre_a_jour_temps)
+
+
+# Appeler la fonction pour démarrer la mise à jour des temps
+mettre_a_jour_temps()
 
 root.mainloop()
